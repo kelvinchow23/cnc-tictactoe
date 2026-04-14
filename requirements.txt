@@ -1,0 +1,2 @@
+pyyaml
+cnc-machine-core @ git+https://github.com/AccelerationConsortium/cnc-4-science.git

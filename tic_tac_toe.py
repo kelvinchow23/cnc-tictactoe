@@ -38,11 +38,11 @@ BAUD_RATE = 115200
 VIRTUAL = False  # Set False for real hardware
 
 # ── Z Heights (calibrate for your hardware) ─────────────────────────────
-Z_PICK = -20.3  # Z to descend when picking up a piece
-Z_PLACE = -19.0  # Z to descend when placing a piece
+Z_PICK = -21.2  # Z to descend when picking up a piece
+Z_PLACE = -19  # Z to descend when placing a piece
 
 # ── Vacuum Gripper ──────────────────────────────────────────────────────
-VACUUM_RPM = 4000
+VACUUM_RPM = 5000
 GRIPPER_OFFSET = {"x": 0.0, "y": 0.0, "z": 0.0}
 
 # ── Labware ─────────────────────────────────────────────────────────────
