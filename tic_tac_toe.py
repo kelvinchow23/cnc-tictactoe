@@ -35,15 +35,15 @@ from game_logic import (
 # ── Hardware ────────────────────────────────────────────────────────────
 COM_PORT = "/dev/ttyUSB0"
 BAUD_RATE = 115200
-VIRTUAL = True  # Set False for real hardware
+VIRTUAL = False  # Set False for real hardware
 
 # ── Z Heights (calibrate for your hardware) ─────────────────────────────
-Z_PICK_STORAGE = -20.0   # Z to descend when picking from storage
-Z_PLACE_BOARD = -18.0    # Z to descend when placing on board
+Z_PICK = -20.2  # Z to descend when picking up a piece
+Z_PLACE = -19.0  # Z to descend when placing a piece
 
 # ── Vacuum Gripper ──────────────────────────────────────────────────────
-VACUUM_RPM = 1000
-GRIPPER_OFFSET = {"x": 7.846, "y": 0.0, "z": 0.0}
+VACUUM_RPM = 2000
+GRIPPER_OFFSET = {"x": 0.0, "y": 0.0, "z": 0.0}
 
 # ── Labware ─────────────────────────────────────────────────────────────
 LABWARE_DIR = Path(__file__).resolve().parent / "labware"
@@ -62,6 +62,7 @@ MOVE_SPEED = 2500
 
 
 # ── CNC Helpers ─────────────────────────────────────────────────────────
+
 
 def vacuum_on(cnc, rpm=None):
     cnc.follow_gcode_path(f"M3 S{rpm or VACUUM_RPM}\n")
@@ -83,11 +84,11 @@ def pick_and_place(cnc, deck, storage_well, board_well):
     sx, sy = get_well_xy(deck, STORAGE_SLOT, storage_well)
     bx, by = get_well_xy(deck, BOARD_SLOT, board_well)
 
-    cnc.move_to_point_safe(sx, sy, Z_PICK_STORAGE, speed=MOVE_SPEED)
+    cnc.move_to_point_safe(sx, sy, Z_PICK, speed=MOVE_SPEED)
     vacuum_on(cnc)
     time.sleep(0.3)
 
-    cnc.move_to_point_safe(bx, by, Z_PLACE_BOARD, speed=MOVE_SPEED)
+    cnc.move_to_point_safe(bx, by, Z_PLACE, speed=MOVE_SPEED)
     vacuum_off(cnc)
     time.sleep(0.3)
 
@@ -97,16 +98,17 @@ def return_piece(cnc, deck, board_well, storage_well):
     bx, by = get_well_xy(deck, BOARD_SLOT, board_well)
     sx, sy = get_well_xy(deck, STORAGE_SLOT, storage_well)
 
-    cnc.move_to_point_safe(bx, by, Z_PLACE_BOARD, speed=MOVE_SPEED)
+    cnc.move_to_point_safe(bx, by, Z_PICK, speed=MOVE_SPEED)
     vacuum_on(cnc)
     time.sleep(0.3)
 
-    cnc.move_to_point_safe(sx, sy, Z_PICK_STORAGE, speed=MOVE_SPEED)
+    cnc.move_to_point_safe(sx, sy, Z_PLACE, speed=MOVE_SPEED)
     vacuum_off(cnc)
     time.sleep(0.3)
 
 
 # ── Game Helpers ────────────────────────────────────────────────────────
+
 
 def load_preset():
     with open(PRESET_PATH) as f:
@@ -141,6 +143,7 @@ def reset_board(cnc, deck, state, board, move_history):
 
 
 # ── UI ──────────────────────────────────────────────────────────────────
+
 
 def select_mode():
     print("\n==============================")
@@ -260,7 +263,9 @@ def play_game(cnc, deck):
         if not VIRTUAL:
             pick_and_place(cnc, deck, storage_well, board_well)
         else:
-            print(f"  [VIRTUAL] {current}: storage {storage_well} -> board {board_well}")
+            print(
+                f"  [VIRTUAL] {current}: storage {storage_well} -> board {board_well}"
+            )
 
         board[row][col] = current
         state.set_status(STORAGE_SLOT, storage_well, "empty")
@@ -282,6 +287,7 @@ def play_game(cnc, deck):
 
 
 # ── Main ────────────────────────────────────────────────────────────────
+
 
 def main():
     cnc = CNC_Machine(COM_PORT, baud_rate=BAUD_RATE, virtual=VIRTUAL)
