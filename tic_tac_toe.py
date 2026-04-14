@@ -82,7 +82,7 @@ def pick_and_place(cnc, deck, storage_well, board_well):
 
     cnc.move_to_point_safe(bx, by, Z_PLACE, speed=MOVE_SPEED)
     cnc.spindle_off()
-    time.sleep(0.3)
+    time.sleep(1.0)
 
 
 def return_piece(cnc, deck, board_well, storage_well):
@@ -96,7 +96,7 @@ def return_piece(cnc, deck, board_well, storage_well):
 
     cnc.move_to_point_safe(sx, sy, Z_PLACE, speed=MOVE_SPEED)
     cnc.spindle_off()
-    time.sleep(0.3)
+    time.sleep(1.0)
 
 
 # ── Game Helpers ────────────────────────────────────────────────────────
@@ -156,8 +156,8 @@ def select_mode():
 
     if num_players == 1:
         print("\nYour symbol:")
-        print("  X (goes first)")
-        print("  O (goes second)")
+        print("  O (goes first)")
+        print("  X (goes second)")
         while True:
             sym = input("Choose (X/O): ").strip().upper()
             if sym in ("X", "O"):
@@ -201,7 +201,7 @@ def play_game(cnc, deck):
     state = load_preset()
     board = new_board()
     move_history = []
-    current = "X"
+    current = "O"
 
     if num_players == 1:
         ai_symbol = "O" if human_symbol == "X" else "X"
