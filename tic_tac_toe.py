@@ -38,11 +38,11 @@ BAUD_RATE = 115200
 VIRTUAL = False  # Set False for real hardware
 
 # ── Z Heights (calibrate for your hardware) ─────────────────────────────
-Z_PICK = -20.2  # Z to descend when picking up a piece
+Z_PICK = -20.3  # Z to descend when picking up a piece
 Z_PLACE = -19.0  # Z to descend when placing a piece
 
 # ── Vacuum Gripper ──────────────────────────────────────────────────────
-VACUUM_RPM = 2000
+VACUUM_RPM = 4000
 GRIPPER_OFFSET = {"x": 0.0, "y": 0.0, "z": 0.0}
 
 # ── Labware ─────────────────────────────────────────────────────────────
@@ -64,14 +64,6 @@ MOVE_SPEED = 2500
 # ── CNC Helpers ─────────────────────────────────────────────────────────
 
 
-def vacuum_on(cnc, rpm=None):
-    cnc.follow_gcode_path(f"M3 S{rpm or VACUUM_RPM}\n")
-
-
-def vacuum_off(cnc):
-    cnc.follow_gcode_path("M5\n")
-
-
 def get_well_xy(deck, slot, well_name):
     """Absolute XY with gripper offset for a well. Z from labware is ignored."""
     labware = deck.get_labware(slot)
@@ -85,11 +77,11 @@ def pick_and_place(cnc, deck, storage_well, board_well):
     bx, by = get_well_xy(deck, BOARD_SLOT, board_well)
 
     cnc.move_to_point_safe(sx, sy, Z_PICK, speed=MOVE_SPEED)
-    vacuum_on(cnc)
+    cnc.spindle_on(speed=VACUUM_RPM)
     time.sleep(0.3)
 
     cnc.move_to_point_safe(bx, by, Z_PLACE, speed=MOVE_SPEED)
-    vacuum_off(cnc)
+    cnc.spindle_off()
     time.sleep(0.3)
 
 
@@ -99,11 +91,11 @@ def return_piece(cnc, deck, board_well, storage_well):
     sx, sy = get_well_xy(deck, STORAGE_SLOT, storage_well)
 
     cnc.move_to_point_safe(bx, by, Z_PICK, speed=MOVE_SPEED)
-    vacuum_on(cnc)
+    cnc.spindle_on(speed=VACUUM_RPM)
     time.sleep(0.3)
 
     cnc.move_to_point_safe(sx, sy, Z_PLACE, speed=MOVE_SPEED)
-    vacuum_off(cnc)
+    cnc.spindle_off()
     time.sleep(0.3)
 
 
@@ -187,6 +179,21 @@ def select_mode():
     return num_players, human_symbol, ai_difficulty
 
 
+def _confirm_quit(cnc, deck, state, board, move_history):
+    """Ask whether to reset before quitting. Returns False (quit signal)."""
+    if move_history:
+        while True:
+            choice = input("Reset board before quitting? (y/n): ").strip().lower()
+            if choice in ("y", "yes"):
+                reset_board(cnc, deck, state, board, move_history)
+                break
+            if choice in ("n", "no"):
+                print("Board left as-is.")
+                break
+            print("Invalid.")
+    return False
+
+
 def play_game(cnc, deck):
     """Run one game. Returns True to play again, False to quit."""
     num_players, human_symbol, ai_difficulty = select_mode()
@@ -238,8 +245,7 @@ def play_game(cnc, deck):
             while True:
                 text = input(prompt).strip()
                 if text.lower() == "quit":
-                    reset_board(cnc, deck, state, board, move_history)
-                    return False
+                    return _confirm_quit(cnc, deck, state, board, move_history)
                 if text.lower() == "reset":
                     reset_board(cnc, deck, state, board, move_history)
                     return True
@@ -281,8 +287,7 @@ def play_game(cnc, deck):
             reset_board(cnc, deck, state, board, move_history)
             return True
         if choice in ("q", "quit"):
-            reset_board(cnc, deck, state, board, move_history)
-            return False
+            return _confirm_quit(cnc, deck, state, board, move_history)
         print("Invalid.")
 
 
