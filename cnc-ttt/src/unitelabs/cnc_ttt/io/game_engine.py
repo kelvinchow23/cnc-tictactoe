@@ -175,12 +175,15 @@ class GameEngine:
 
     def board_as_string(self) -> str:
         """Return the board as a displayable string."""
-        sym = {None: ".", "X": "X", "O": "O"}
-        lines = ["    1   2   3", "  +---+---+---+"]
+        sym = {None: "·", "X": "X", "O": "O"}
+        lines = []
+        lines.append("    1   2   3")
+        lines.append("")
         for r, letter in enumerate("ABC"):
-            cells = " | ".join(sym[self._board[r][c]] for c in range(3))
-            lines.append(f"{letter} | {cells} |")
-            lines.append("  +---+---+---+")
+            row = "   ".join(sym[self._board[r][c]] for c in range(3))
+            lines.append(f"{letter}   {row}")
+            if r < 2:
+                lines.append("")
         return "\n".join(lines)
 
     def start_game(
