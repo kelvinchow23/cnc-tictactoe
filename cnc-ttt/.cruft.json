@@ -1,0 +1,31 @@
+{
+  "template": "https://gitlab.com/unitelabs/cdk/connector-factory.git",
+  "commit": "69585dd163662d9263d1ce0ebcc6cda3524be6c1",
+  "checkout": null,
+  "context": {
+    "cookiecutter": {
+      "connector_name": "tic-tac-toe",
+      "project_name": "cnc-ttt",
+      "package_name": "cnc_ttt",
+      "__package_import_name": "unitelabs.cnc_ttt",
+      "__protocol_name": "CncTtt",
+      "project_description": "A connector for the tic-tac-toe built with the UniteLabs CDK.",
+      "author_full_name": "kelvin chow",
+      "author_email": "kth.chow@utoronto.ca",
+      "project_repo": "https://github.com/kelvinchow23/cnc-tictactoe",
+      "communication_type": "serial",
+      "env": "uv",
+      "_render_devdocs": false,
+      "_jinja2_env_vars": {
+        "lstrip_blocks": true,
+        "trim_blocks": true
+      },
+      "_extensions": [
+        "internal_ext.IsInternalExtension"
+      ],
+      "_template": "https://gitlab.com/unitelabs/cdk/connector-factory.git",
+      "_commit": "69585dd163662d9263d1ce0ebcc6cda3524be6c1"
+    }
+  },
+  "directory": null
+}
