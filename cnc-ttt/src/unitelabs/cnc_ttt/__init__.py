@@ -36,7 +36,9 @@ class CncTttConfig(ConnectorBaseConfig):
     virtual: bool = False
 
 
-async def create_app(config: CncTttConfig) -> collections.abc.AsyncGenerator[Connector, None]:
+async def create_app(
+    config: CncTttConfig,
+) -> collections.abc.AsyncGenerator[Connector, None]:
     """Create the connector application."""
     app = Connector(config)
 

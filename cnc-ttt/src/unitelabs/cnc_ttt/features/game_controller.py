@@ -30,8 +30,12 @@ class GameController(sila.Feature):
     async def start_game(
         self,
         mode: typing.Annotated[str, sila.constraints.Set(values=GAME_MODES)],
-        difficulty: typing.Annotated[str, sila.constraints.Set(values=DIFFICULTIES)] = "Easy",
-        human_symbol: typing.Annotated[str, sila.constraints.Set(values=PLAYER_SYMBOLS)] = "X",
+        difficulty: typing.Annotated[
+            str, sila.constraints.Set(values=DIFFICULTIES)
+        ] = "Easy",
+        human_symbol: typing.Annotated[
+            str, sila.constraints.Set(values=PLAYER_SYMBOLS)
+        ] = "X",
     ) -> str:
         """Start a new tic-tac-toe game.
 
@@ -53,7 +57,9 @@ class GameController(sila.Feature):
           GameAlreadyInProgress: A game is already in progress.
             Reset the board first before starting a new game.
         """
-        self._engine.start_game(mode=mode, difficulty=difficulty, human_symbol=human_symbol)
+        self._engine.start_game(
+            mode=mode, difficulty=difficulty, human_symbol=human_symbol
+        )
         if mode == "SinglePlayer":
             return f"Game started: You are {human_symbol}, AI is {difficulty}. O goes first."
         return "Game started: Two player mode. O goes first."
@@ -78,6 +84,8 @@ class GameController(sila.Feature):
         return "Board reset. All pieces returned to storage."
 
     @sila.UnobservableProperty()
-    async def game_status(self) -> typing.Annotated[str, sila.constraints.Set(values=GAME_STATUSES)]:
+    async def game_status(
+        self,
+    ) -> typing.Annotated[str, sila.constraints.Set(values=GAME_STATUSES)]:
         """Get the current game status."""
         return self._engine.game_status

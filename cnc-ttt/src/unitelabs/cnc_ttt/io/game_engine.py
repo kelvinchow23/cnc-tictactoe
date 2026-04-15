@@ -52,7 +52,12 @@ BOARD_SLOT = "2"
 class GameEngine:
     """Manages game state and CNC hardware for tic-tac-toe."""
 
-    def __init__(self, com_port: str = "/dev/ttyUSB0", baud_rate: int = 115200, virtual: bool = False):
+    def __init__(
+        self,
+        com_port: str = "/dev/ttyUSB0",
+        baud_rate: int = 115200,
+        virtual: bool = False,
+    ):
         self._com_port = com_port
         self._baud_rate = baud_rate
         self._virtual = virtual
@@ -71,7 +76,9 @@ class GameEngine:
     async def open(self) -> None:
         """Connect to CNC hardware and load deck."""
         try:
-            self._cnc = CNC_Machine(self._com_port, baud_rate=self._baud_rate, virtual=self._virtual)
+            self._cnc = CNC_Machine(
+                self._com_port, baud_rate=self._baud_rate, virtual=self._virtual
+            )
             self._cnc.connect()
             self._cnc.wake_up()
             if not self._virtual:
@@ -176,7 +183,9 @@ class GameEngine:
             lines.append("  +---+---+---+")
         return "\n".join(lines)
 
-    def start_game(self, mode: str, difficulty: str = "Easy", human_symbol: str = "X") -> None:
+    def start_game(
+        self, mode: str, difficulty: str = "Easy", human_symbol: str = "X"
+    ) -> None:
         """Start a new game."""
         if self._game_status == "InProgress":
             raise GameAlreadyInProgress

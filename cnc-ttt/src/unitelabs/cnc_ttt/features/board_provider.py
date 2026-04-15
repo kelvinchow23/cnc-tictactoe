@@ -60,7 +60,9 @@ class BoardProvider(sila.Feature):
         return self._engine.board_as_string()
 
     @sila.UnobservableProperty()
-    async def current_player(self) -> typing.Annotated[str, sila.constraints.Set(values=PLAYER_SYMBOLS)]:
+    async def current_player(
+        self,
+    ) -> typing.Annotated[str, sila.constraints.Set(values=PLAYER_SYMBOLS)]:
         """Get the symbol of the player whose turn it is."""
         return self._engine.current_player
 
@@ -73,11 +75,15 @@ class BoardProvider(sila.Feature):
         return self._engine.move_history
 
     @sila.UnobservableProperty()
-    async def game_mode(self) -> typing.Annotated[str, sila.constraints.Set(values=GAME_MODES)]:
+    async def game_mode(
+        self,
+    ) -> typing.Annotated[str, sila.constraints.Set(values=GAME_MODES)]:
         """Get the current game mode."""
         return self._engine.game_mode
 
     @sila.UnobservableProperty()
-    async def difficulty(self) -> typing.Annotated[str, sila.constraints.Set(values=DIFFICULTIES)]:
+    async def difficulty(
+        self,
+    ) -> typing.Annotated[str, sila.constraints.Set(values=DIFFICULTIES)]:
         """Get the current AI difficulty level."""
         return self._engine.difficulty

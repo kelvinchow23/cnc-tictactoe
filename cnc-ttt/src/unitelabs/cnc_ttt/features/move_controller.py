@@ -5,7 +5,12 @@ import typing_extensions as typing
 from unitelabs.cdk import sila
 
 from ..io.enums import PLAYER_SYMBOLS
-from ..io.errors import CncMotionFailed, GameNotInProgress, InvalidMove, NoPiecesRemaining
+from ..io.errors import (
+    CncMotionFailed,
+    GameNotInProgress,
+    InvalidMove,
+    NoPiecesRemaining,
+)
 from ..io.game_engine import GameEngine
 
 
@@ -29,9 +34,22 @@ class MoveController(sila.Feature):
     @sila.ObservableCommand()
     async def make_move(
         self,
-        position: typing.Annotated[str, sila.constraints.Set(values=[
-            "A1", "A2", "A3", "B1", "B2", "B3", "C1", "C2", "C3",
-        ])],
+        position: typing.Annotated[
+            str,
+            sila.constraints.Set(
+                values=[
+                    "A1",
+                    "A2",
+                    "A3",
+                    "B1",
+                    "B2",
+                    "B3",
+                    "C1",
+                    "C2",
+                    "C3",
+                ]
+            ),
+        ],
         *,
         status: sila.Status,
     ) -> str:
