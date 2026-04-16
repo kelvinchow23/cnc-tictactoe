@@ -36,7 +36,7 @@ from game_logic import (
 )
 
 # Hardware defaults
-Z_PICK = -21.2
+Z_PICK = -21.0
 Z_PLACE = -19
 VACUUM_RPM = 2500
 GRIPPER_OFFSET = {"x": 0.0, "y": 0.0, "z": 0.0}
@@ -47,8 +47,8 @@ GAMEBOARD_LABWARE = LABWARE_DIR / "gameboard_15_tuberack_100ul.json"
 PRESET_PATH = _REPO_ROOT / "presets" / "ttt_preset.yaml"
 STORAGE_SLOT = "1"
 BOARD_SLOT = "2"
-GRIP_DELAY = 1.0
-PLACE_DELAY = 3.0
+GRIP_DELAY = 0.5
+PLACE_DELAY = 3.5
 
 
 class GameEngine:

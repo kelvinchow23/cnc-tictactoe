@@ -17,8 +17,6 @@ from ..io.game_engine import GameEngine
 class MoveController(sila.Feature):
     """Execute tic-tac-toe moves on the physical CNC board.
 
-    The MakeMove command is observable because it involves CNC gantry
-    motion (picking a piece from storage and placing it on the board).
     In single-player mode, the AI response move is executed automatically.
     """
 
@@ -31,7 +29,7 @@ class MoveController(sila.Feature):
         )
         self._engine = engine
 
-    @sila.ObservableCommand()
+    @sila.UnobservableCommand()
     async def make_move(
         self,
         position: typing.Annotated[
@@ -50,8 +48,6 @@ class MoveController(sila.Feature):
                 ]
             ),
         ],
-        *,
-        status: sila.Status,
     ) -> str:
         """Place a piece at the specified board position via the CNC gantry.
 
@@ -76,16 +72,11 @@ class MoveController(sila.Feature):
           CncMotionFailed: The CNC gantry failed during a pick-and-place
             operation. Check for mechanical obstructions.
         """
-        status.update(progress=0.0)
-
         human_result = self._engine.make_move(position)
-        status.update(progress=0.5)
-
         result = human_result
 
         if self._engine.is_ai_turn():
             ai_result = self._engine.make_ai_move()
             result += f"\n{ai_result}"
 
-        status.update(progress=1.0)
         return result

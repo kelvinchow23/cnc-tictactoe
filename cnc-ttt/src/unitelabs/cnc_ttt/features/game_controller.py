@@ -61,15 +61,16 @@ class GameController(sila.Feature):
             mode=mode, difficulty=difficulty, human_symbol=human_symbol
         )
         if mode == "SinglePlayer":
-            return f"Game started: You are {human_symbol}, AI is {difficulty}. O goes first."
+            msg = f"Game started: You are {human_symbol}, AI is {difficulty}. O goes first."
+            if self._engine.is_ai_turn():
+                ai_result = self._engine.make_ai_move()
+                msg += f"\n{ai_result}"
+            return msg
         return "Game started: Two player mode. O goes first."
 
-    @sila.ObservableCommand()
-    async def reset_board(self, *, status: sila.Status) -> str:
+    @sila.UnobservableCommand()
+    async def reset_board(self) -> str:
         """Reset the board by returning all pieces to storage via the CNC gantry.
-
-        This is a long-running command as the CNC must physically move
-        each piece back to its storage position.
 
         Returns:
           Confirmation: A confirmation message after the board is reset.
@@ -78,9 +79,7 @@ class GameController(sila.Feature):
           CncMotionFailed: The CNC gantry failed during piece return.
             Check for mechanical obstructions.
         """
-        status.update(progress=0.0)
         self._engine.reset_board()
-        status.update(progress=1.0)
         return "Board reset. All pieces returned to storage."
 
     @sila.UnobservableProperty()

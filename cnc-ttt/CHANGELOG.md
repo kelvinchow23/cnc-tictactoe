@@ -11,6 +11,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - HardwareSettings feature: read and adjust CNC motion parameters at runtime (z heights, vacuum RPM, move speed, grip/place delays, gripper offset)
 - Converted module-level hardware constants to instance attributes on GameEngine
 
+### Changed
+- Switched MakeMove and ResetBoard from ObservableCommand to UnobservableCommand to fix gRPC error 12 (blocking I/O stalling the event loop)
+- AI now immediately plays its opening move during StartGame when it goes first in single-player mode
+
 ## 0.1.0 - 2026-04-14
 
 ### Added
