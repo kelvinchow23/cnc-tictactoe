@@ -75,6 +75,15 @@ class GameEngine:
         self._human_symbol: str = "X"
         self._ai_symbol: str = "O"
 
+        # Hardware parameters (adjustable at runtime)
+        self.z_pick: float = Z_PICK
+        self.z_place: float = Z_PLACE
+        self.vacuum_rpm: int = VACUUM_RPM
+        self.gripper_offset: dict[str, float] = dict(GRIPPER_OFFSET)
+        self.move_speed: int = MOVE_SPEED
+        self.grip_delay: float = GRIP_DELAY
+        self.place_delay: float = PLACE_DELAY
+
     async def open(self) -> None:
         """Connect to CNC hardware and load deck."""
         try:
@@ -98,7 +107,7 @@ class GameEngine:
         """Disconnect CNC hardware."""
         if self._cnc is not None:
             if not self._virtual:
-                self._cnc.move_to_point_safe(0, 0, 0, speed=MOVE_SPEED)
+                self._cnc.move_to_point_safe(0, 0, 0, speed=self.move_speed)
             self._cnc.close()
             self._cnc = None
 
@@ -111,19 +120,19 @@ class GameEngine:
 
     def _get_well_xy(self, slot: str, well_name: str) -> tuple[float, float]:
         labware = self._deck.get_labware(slot)
-        x, y, _ = labware[well_name].position(offset=GRIPPER_OFFSET)
+        x, y, _ = labware[well_name].position(offset=self.gripper_offset)
         return x, y
 
     def _pick_and_place(self, storage_well: str, board_well: str) -> None:
         sx, sy = self._get_well_xy(STORAGE_SLOT, storage_well)
         bx, by = self._get_well_xy(BOARD_SLOT, board_well)
         try:
-            self._cnc.move_to_point_safe(sx, sy, Z_PICK, speed=MOVE_SPEED)
-            self._cnc.spindle_on(speed=VACUUM_RPM)
-            time.sleep(GRIP_DELAY)
-            self._cnc.move_to_point_safe(bx, by, Z_PLACE, speed=MOVE_SPEED)
+            self._cnc.move_to_point_safe(sx, sy, self.z_pick, speed=self.move_speed)
+            self._cnc.spindle_on(speed=self.vacuum_rpm)
+            time.sleep(self.grip_delay)
+            self._cnc.move_to_point_safe(bx, by, self.z_place, speed=self.move_speed)
             self._cnc.spindle_off()
-            time.sleep(PLACE_DELAY)
+            time.sleep(self.place_delay)
         except Exception as exc:
             msg = f"CNC motion failed during pick-and-place: {exc}"
             raise CncMotionFailed(msg) from exc
@@ -132,12 +141,12 @@ class GameEngine:
         bx, by = self._get_well_xy(BOARD_SLOT, board_well)
         sx, sy = self._get_well_xy(STORAGE_SLOT, storage_well)
         try:
-            self._cnc.move_to_point_safe(bx, by, Z_PICK, speed=MOVE_SPEED)
-            self._cnc.spindle_on(speed=VACUUM_RPM)
-            time.sleep(GRIP_DELAY)
-            self._cnc.move_to_point_safe(sx, sy, Z_PLACE, speed=MOVE_SPEED)
+            self._cnc.move_to_point_safe(bx, by, self.z_pick, speed=self.move_speed)
+            self._cnc.spindle_on(speed=self.vacuum_rpm)
+            time.sleep(self.grip_delay)
+            self._cnc.move_to_point_safe(sx, sy, self.z_place, speed=self.move_speed)
             self._cnc.spindle_off()
-            time.sleep(PLACE_DELAY)
+            time.sleep(self.place_delay)
         except Exception as exc:
             msg = f"CNC motion failed during return: {exc}"
             raise CncMotionFailed(msg) from exc

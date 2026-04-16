@@ -4,7 +4,7 @@ from importlib.metadata import version
 
 from unitelabs.cdk import Connector, ConnectorBaseConfig, SiLAServerConfig
 
-from .features import BoardProvider, GameController, MoveController
+from .features import BoardProvider, GameController, HardwareSettings, MoveController
 from .io import GameEngine, SimulationEngine
 
 __version__ = version("unitelabs-cnc-ttt")
@@ -52,6 +52,7 @@ async def create_app(
     app.register(GameController(engine))
     app.register(BoardProvider(engine))
     app.register(MoveController(engine))
+    app.register(HardwareSettings(engine))
 
     yield app
 
