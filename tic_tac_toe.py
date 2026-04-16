@@ -42,7 +42,9 @@ Z_PICK = -21.2  # Z to descend when picking up a piece
 Z_PLACE = -19  # Z to descend when placing a piece
 
 # ── Vacuum Gripper ──────────────────────────────────────────────────────
-VACUUM_RPM = 5000
+VACUUM_RPM = 3500
+GRIP_DELAY = 1.0
+PLACE_DELAY = 3.0
 GRIPPER_OFFSET = {"x": 0.0, "y": 0.0, "z": 0.0}
 
 # ── Labware ─────────────────────────────────────────────────────────────
@@ -78,11 +80,11 @@ def pick_and_place(cnc, deck, storage_well, board_well):
 
     cnc.move_to_point_safe(sx, sy, Z_PICK, speed=MOVE_SPEED)
     cnc.spindle_on(speed=VACUUM_RPM)
-    time.sleep(0.3)
+    time.sleep(GRIP_DELAY)
 
     cnc.move_to_point_safe(bx, by, Z_PLACE, speed=MOVE_SPEED)
     cnc.spindle_off()
-    time.sleep(1.0)
+    time.sleep(PLACE_DELAY)
 
 
 def return_piece(cnc, deck, board_well, storage_well):
@@ -92,11 +94,11 @@ def return_piece(cnc, deck, board_well, storage_well):
 
     cnc.move_to_point_safe(bx, by, Z_PICK, speed=MOVE_SPEED)
     cnc.spindle_on(speed=VACUUM_RPM)
-    time.sleep(0.3)
+    time.sleep(GRIP_DELAY)
 
     cnc.move_to_point_safe(sx, sy, Z_PLACE, speed=MOVE_SPEED)
     cnc.spindle_off()
-    time.sleep(1.0)
+    time.sleep(PLACE_DELAY)
 
 
 # ── Game Helpers ────────────────────────────────────────────────────────

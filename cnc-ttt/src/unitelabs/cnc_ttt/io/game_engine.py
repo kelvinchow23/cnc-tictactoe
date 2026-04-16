@@ -38,7 +38,7 @@ from game_logic import (
 # Hardware defaults
 Z_PICK = -21.2
 Z_PLACE = -19
-VACUUM_RPM = 5000
+VACUUM_RPM = 3500
 GRIPPER_OFFSET = {"x": 0.0, "y": 0.0, "z": 0.0}
 MOVE_SPEED = 2500
 LABWARE_DIR = _REPO_ROOT / "labware"
@@ -47,6 +47,8 @@ GAMEBOARD_LABWARE = LABWARE_DIR / "gameboard_15_tuberack_100ul.json"
 PRESET_PATH = _REPO_ROOT / "presets" / "ttt_preset.yaml"
 STORAGE_SLOT = "1"
 BOARD_SLOT = "2"
+GRIP_DELAY = 1.0
+PLACE_DELAY = 3.0
 
 
 class GameEngine:
@@ -118,10 +120,10 @@ class GameEngine:
         try:
             self._cnc.move_to_point_safe(sx, sy, Z_PICK, speed=MOVE_SPEED)
             self._cnc.spindle_on(speed=VACUUM_RPM)
-            time.sleep(0.3)
+            time.sleep(GRIP_DELAY)
             self._cnc.move_to_point_safe(bx, by, Z_PLACE, speed=MOVE_SPEED)
             self._cnc.spindle_off()
-            time.sleep(1.0)
+            time.sleep(PLACE_DELAY)
         except Exception as exc:
             msg = f"CNC motion failed during pick-and-place: {exc}"
             raise CncMotionFailed(msg) from exc
@@ -132,10 +134,10 @@ class GameEngine:
         try:
             self._cnc.move_to_point_safe(bx, by, Z_PICK, speed=MOVE_SPEED)
             self._cnc.spindle_on(speed=VACUUM_RPM)
-            time.sleep(0.3)
+            time.sleep(GRIP_DELAY)
             self._cnc.move_to_point_safe(sx, sy, Z_PLACE, speed=MOVE_SPEED)
             self._cnc.spindle_off()
-            time.sleep(1.0)
+            time.sleep(PLACE_DELAY)
         except Exception as exc:
             msg = f"CNC motion failed during return: {exc}"
             raise CncMotionFailed(msg) from exc
