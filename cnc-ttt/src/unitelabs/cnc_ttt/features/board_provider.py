@@ -87,3 +87,10 @@ class BoardProvider(sila.Feature):
     ) -> typing.Annotated[str, sila.constraints.Set(values=DIFFICULTIES)]:
         """Get the current AI difficulty level."""
         return self._engine.difficulty
+
+    @sila.UnobservableProperty()
+    async def human_symbol(
+        self,
+    ) -> typing.Annotated[str, sila.constraints.Set(values=PLAYER_SYMBOLS)]:
+        """Get the human player's symbol in single-player mode."""
+        return self._engine.human_symbol

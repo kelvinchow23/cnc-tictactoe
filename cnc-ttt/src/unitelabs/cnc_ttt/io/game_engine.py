@@ -176,6 +176,10 @@ class GameEngine:
         return self._difficulty
 
     @property
+    def human_symbol(self) -> str:
+        return self._human_symbol
+
+    @property
     def board_state(self) -> list[list[str | None]]:
         return [row[:] for row in self._board]
 
